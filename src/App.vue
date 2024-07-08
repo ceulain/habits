@@ -13,38 +13,70 @@ const numberOfDays = ref(currentDay.daysInMonth())
 </script>
 
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th>&nbsp;</th>
-        <th :colspan="numberOfDays">Month</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th>&nbsp;</th>
-        <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">{{ index + 1 }}</td>
-      </tr>
-      <tr>
-        <th>A</th>
-        <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-          <input type="checkbox" id="scales" name="scales" />
-        </td>
-      </tr>
-      <tr>
-        <th>B</th>
-        <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-          <input type="checkbox" id="scales" name="scales" />
-        </td>
-      </tr>
-      <tr>
-        <th>C</th>
-        <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-          <input type="checkbox" id="scales" name="scales" />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th :colspan="numberOfDays">Month</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>&nbsp;</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">{{ index + 1 }}</td>
+        </tr>
+        <tr>
+          <th>A</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            <input type="checkbox" id="scales" name="scales" />
+          </td>
+        </tr>
+        <tr>
+          <th>B</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            <input type="checkbox" id="scales" name="scales" />
+          </td>
+        </tr>
+        <tr>
+          <th>C</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            <input type="checkbox" id="scales" name="scales" />
+          </td>
+        </tr>
+      </tbody>
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th :colspan="numberOfDays">Month</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>&nbsp;</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">{{ index + 1 }}</td>
+        </tr>
+        <tr>
+          <th>A</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            <input type="checkbox" id="scales" name="scales" />
+          </td>
+        </tr>
+        <tr>
+          <th>B</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            <input type="checkbox" id="scales" name="scales" />
+          </td>
+        </tr>
+        <tr>
+          <th>C</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            <input type="checkbox" id="scales" name="scales" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <style scoped>
