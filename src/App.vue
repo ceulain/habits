@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
+import Modal from '../src/components/Modal.vue'
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 dayjs.locale('fr')
@@ -13,6 +13,7 @@ const numberOfDays = ref(currentDay.daysInMonth())
 </script>
 
 <template>
+  <Modal></Modal>
   <div class="container">
     <table>
       <thead>
