@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Modal from '../src/components/Modal.vue'
-import HeaderApp from '../src/components/HeaderApp.vue'
-import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
+import { ref } from 'vue'
+import dayjs from 'dayjs'
+
+import Modal from '@/components/ModalComponent.vue'
+import HeaderApp from '@/components/HeaderApp.vue'
+
 dayjs.locale('fr')
 
+const open = ref(false)
 const currentDay = dayjs()
+
 const currentMonth = ref(currentDay.format('MMMM'))
 console.log(currentMonth.value)
 
-const numberOfDays = ref(currentDay.daysInMonth())
+// const numberOfDays = ref(currentDay.daysInMonth())
+
+function openModal() {
+  open.value = !open.value
+}
 </script>
 
 <template>
-  <header-app></header-app>
-  <Modal></Modal>
+  <HeaderApp :open="open" :openModal="openModal"></HeaderApp>
+  <Modal :open="open" :openModal="openModal"></Modal>
   <!-- <div>
     <table>
       <thead>

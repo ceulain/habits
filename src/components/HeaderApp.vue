@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import IconMenu from '@/icons/IconMenu.vue'
+
+const props = defineProps({
+  open: Boolean,
+  openModal: Function
+})
+</script>
+
 <style scoped>
 header {
   position: fixed;
@@ -15,13 +24,9 @@ header {
   background-color: white;
 }
 </style>
-<script setup>
-import IconMenu from '../icons/IconMenu.vue'
-</script>
 <template>
   <header>
-    <icon-menu @click="log"></icon-menu>
-
+    <icon-menu @click="props.openModal"></icon-menu>
     <h1>Habits</h1>
   </header>
 </template>
