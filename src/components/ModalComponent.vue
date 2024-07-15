@@ -28,16 +28,28 @@ const props = defineProps({
 
   background-color: #fff;
 }
+
+.v-enter-from,
+.v-leave-to {
+  left: -100%;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: left 0.3s ease;
+}
 </style>
 
 <template>
-  <div v-if="props.open" class="container" @click="props.openModal">
-    <div class="modal-content">
-      <ul>
-        <li>Menu 1</li>
-        <li>Menu 2</li>
-        <li>Menu 3</li>
-      </ul>
+  <transition>
+    <div class="container" v-if="props.open" @click="props.openModal">
+      <div class="modal-content">
+        <ul>
+          <li>Menu 1</li>
+          <li>Menu 2</li>
+          <li>Menu 3</li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
