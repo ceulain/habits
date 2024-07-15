@@ -1,115 +1,24 @@
-<script setup lang="ts">
-import 'dayjs/locale/fr'
-import { ref } from 'vue'
-import dayjs from 'dayjs'
+<script setup>
+import { computed, ref } from 'vue'
+import Home from '@/routes/Home.vue'
+import Streak from '@/routes/Streak.vue'
 
-import Modal from '@/components/ModalComponent.vue'
-import HeaderApp from '@/components/HeaderApp.vue'
-
-dayjs.locale('fr')
-
-const open = ref(false)
-const currentDay = dayjs()
-
-const currentMonth = ref(currentDay.format('MMMM'))
-console.log(currentMonth.value)
-
-// const numberOfDays = ref(currentDay.daysInMonth())
-
-function openModal() {
-  open.value = !open.value
+const routes = {
+  '/': Home,
+  '/streak': Streak
 }
+
+const currentPath = ref(window.location.hash)
+
+window.addEventListener('hashchange', () => {
+  currentPath.value = window.location.hash
+})
+
+const currentView = computed(() => routes[currentPath.value.slice(1) || '/'] || NotFound)
 </script>
 
 <template>
-  <HeaderApp :open="open" :openModal="openModal"></HeaderApp>
-  <Modal :open="open" :openModal="openModal"></Modal>
-  <!-- <div>
-    <table>
-      <thead>
-        <tr>
-          <th>&nbsp;</th>
-          <th :colspan="numberOfDays">Month</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>&nbsp;</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">{{ index + 1 }}</td>
-        </tr>
-        <tr>
-          <th>A</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>B</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>C</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-      </tbody>
-      <thead>
-        <tr>
-          <th>&nbsp;</th>
-          <th :colspan="numberOfDays">Month</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>&nbsp;</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">{{ index + 1 }}</td>
-        </tr>
-        <tr>
-          <th>A</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>B</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>C</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div> -->
+  <a href="#/">Home</a>
+  <a href="#/streak">Streak</a>
+  <component :is="currentView" />
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
