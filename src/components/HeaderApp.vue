@@ -24,6 +24,10 @@ header {
 
   background-color: white;
 }
+
+svg:hover {
+  cursor: pointer;
+}
 </style>
 <template>
   <header>

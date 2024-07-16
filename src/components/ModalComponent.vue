@@ -24,7 +24,7 @@ const props = defineProps({
   bottom: 0;
   left: 0;
   height: 100vh;
-  width: 400px;
+  width: 336px;
 
   background-color: #fff;
 }
@@ -47,6 +47,7 @@ const props = defineProps({
         <ul>
           <li><a href="#/">Home</a></li>
           <li><a href="#/streak">Streak</a></li>
+          <li><button>Ajouter une tâche</button></li>
         </ul>
       </div>
     </div>
