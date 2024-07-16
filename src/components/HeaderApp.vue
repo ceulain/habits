@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import IconMenu from '@/icons/IconMenu.vue'
-import Modal from '@/components/ModalComponent.vue'
+import Drawer from '@/components/DrawerComponent.vue'
 
 const props = defineProps({
   open: Boolean,
@@ -34,5 +34,5 @@ svg:hover {
     <icon-menu @click="props.openModal"></icon-menu>
     <h1>Habits</h1>
   </header>
-  <Modal :open="open" :openModal="openModal"></Modal>
+  <Drawer :open="open" :openModal="openModal"></Drawer>
 </template>

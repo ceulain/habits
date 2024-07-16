@@ -15,6 +15,7 @@
   "dependencies": {
     "@material/web": "^1.5.1",
     "dayjs": "^1.11.11",
+    "dexie": "^4.0.8",
     "vue": "^3.4.29"
   },
   "devDependencies": {

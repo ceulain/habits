@@ -47,7 +47,6 @@ const props = defineProps({
         <ul>
           <li><a href="#/">Home</a></li>
           <li><a href="#/streak">Streak</a></li>
-          <li><button>Ajouter une tâche</button></li>
         </ul>
       </div>
     </div>
