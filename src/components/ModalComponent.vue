@@ -45,9 +45,8 @@ const props = defineProps({
     <div class="container" v-if="props.open" @click="props.openModal">
       <div class="modal-content">
         <ul>
-          <li>Menu 1</li>
-          <li>Menu 2</li>
-          <li>Menu 3</li>
+          <li><a href="#/">Home</a></li>
+          <li><a href="#/streak">Streak</a></li>
         </ul>
       </div>
     </div>

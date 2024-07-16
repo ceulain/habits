@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import IconMenu from '@/icons/IconMenu.vue'
+import Modal from '@/components/ModalComponent.vue'
 
 const props = defineProps({
   open: Boolean,
@@ -9,7 +10,7 @@ const props = defineProps({
 
 <style scoped>
 header {
-  position: fixed;
+  position: sticky;
   top: 0;
 
   display: flex;
@@ -29,4 +30,5 @@ header {
     <icon-menu @click="props.openModal"></icon-menu>
     <h1>Habits</h1>
   </header>
+  <Modal :open="open" :openModal="openModal"></Modal>
 </template>
