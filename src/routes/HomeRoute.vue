@@ -2,7 +2,9 @@
 import 'dayjs/locale/fr'
 import { ref } from 'vue'
 import dayjs from 'dayjs'
-import { db } from '@/db'
+import { db, type Habit } from '@/db'
+import { useObservable } from '@vueuse/rxjs'
+import { liveQuery } from 'dexie'
 
 dayjs.locale('fr')
 
@@ -12,7 +14,7 @@ const currentMonth = ref(currentDay.format('MMMM'))
 const habitName = ref('')
 console.log(currentMonth.value)
 
-// const numberOfDays = ref(currentDay.daysInMonth())
+const numberOfDays = ref(currentDay.daysInMonth())
 
 async function addHabit(e: Event) {
   e.preventDefault()
@@ -33,6 +35,10 @@ async function addHabit(e: Event) {
   }
 }
 
+const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()))
+
+console.log(habits)
+
 function onInput(e: Event) {
   habitName.value = (<HTMLInputElement>e.target).value
 }
@@ -51,7 +57,7 @@ function onInput(e: Event) {
     <button @click="addHabit">Ajouter la tâche</button>
   </form>
 
-  <!-- <div>
+  <div class="table-container">
     <table>
       <thead>
         <tr>
@@ -62,9 +68,17 @@ function onInput(e: Event) {
       <tbody>
         <tr>
           <th>&nbsp;</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">{{ index + 1 }}</td>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            {{ index + 1 }}
+          </td>
         </tr>
-        <tr>
+        <tr v-for="(habit, index) in habits" :key="habit.id">
+          <th>{{ habit.name }}</th>
+          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
+            <input type="checkbox" id="scales" name="scales" />
+          </td>
+        </tr>
+        <!-- <tr>
           <th>A</th>
           <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
             <input type="checkbox" id="scales" name="scales" />
@@ -81,9 +95,9 @@ function onInput(e: Event) {
           <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
             <input type="checkbox" id="scales" name="scales" />
           </td>
-        </tr>
+        </tr> -->
       </tbody>
-      <thead>
+      <!-- <thead>
         <tr>
           <th>&nbsp;</th>
           <th :colspan="numberOfDays">Month</th>
@@ -112,9 +126,9 @@ function onInput(e: Event) {
             <input type="checkbox" id="scales" name="scales" />
           </td>
         </tr>
-      </tbody>
+      </tbody> -->
     </table>
-  </div> -->
+  </div>
 </template>
 
 <style scoped>
@@ -122,6 +136,9 @@ header {
   line-height: 1.5;
 }
 
+.table-container {
+  overflow: auto;
+}
 @media (min-width: 1024px) {
   header {
     display: flex;

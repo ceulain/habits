@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie'
 
-interface Habit {
+type Habit = {
   id: number
   name: string
   doneDates: string[]
