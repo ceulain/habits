@@ -57,9 +57,17 @@ function onChange(day: number, habitId: number) {
 
 function isChecked(day: number, habitId: number) {
   const habit = habits.value?.find((habit) => habit.id === habitId)
-  const dates = dayjs().set('date', day).format('DD/MM/YYYY')
+  const date = dayjs().set('date', day).format('DD/MM/YYYY')
 
-  return habit?.doneDates.includes(dates)
+  return habit?.doneDates.includes(date)
+}
+
+function isDisabled(day: number) {
+  const date = dayjs().set('date', day)
+  const isBefore = date.isBefore(dayjs())
+  const isAfter = date.isAfter(dayjs())
+
+  return isBefore || isAfter
 }
 </script>
 
@@ -99,6 +107,7 @@ function isChecked(day: number, habitId: number) {
               id="habits"
               name="habits"
               :checked="isChecked(index + 1 /* day */, habit.id)"
+              :disabled="isDisabled(index + 1)"
               @change="onChange(index + 1 /* day */, habit.id)"
             />
           </td>
