@@ -12,7 +12,6 @@ const currentDay = dayjs()
 
 const currentMonth = ref(currentDay.format('MMMM'))
 const habitName = ref('')
-console.log(currentMonth.value)
 
 const numberOfDays = ref(currentDay.daysInMonth())
 
@@ -26,8 +25,6 @@ async function addHabit(e: Event) {
       doneDates: []
     })
 
-    console.log('add task', habitName.value)
-
     // Reset form:
     habitName.value = ''
   } catch (error) {
@@ -37,10 +34,25 @@ async function addHabit(e: Event) {
 
 const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()))
 
-console.log(habits)
-
 function onInput(e: Event) {
   habitName.value = (<HTMLInputElement>e.target).value
+}
+
+function onChange(day: number, habitId: number) {
+  const dates = dayjs().set('date', day).format('DD/MM/YYYY')
+
+  db.habits
+    .where(':id')
+    .equals(habitId)
+    .modify((habit) => {
+      habit.doneDates.push(dates)
+    })
+    .then(
+      (id) => {
+        console.log(`Habit with id ${id} has been updated`)
+      },
+      (error) => console.log("Habit didn't update", error)
+    )
 }
 </script>
 
@@ -75,7 +87,12 @@ function onInput(e: Event) {
         <tr v-for="(habit, index) in habits" :key="habit.id">
           <th>{{ habit.name }}</th>
           <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
+            <input
+              type="checkbox"
+              id="habits"
+              name="habits"
+              @change="onChange(index + 1 /* day */, habit.id)"
+            />
           </td>
         </tr>
         <!-- <tr>
