@@ -54,6 +54,13 @@ function onChange(day: number, habitId: number) {
       (error) => console.log("Habit didn't update", error)
     )
 }
+
+function isChecked(day: number, habitId: number) {
+  const habit = habits.value?.find((habit) => habit.id === habitId)
+  const dates = dayjs().set('date', day).format('DD/MM/YYYY')
+
+  return habit?.doneDates.includes(dates)
+}
 </script>
 
 <template>
@@ -91,6 +98,7 @@ function onChange(day: number, habitId: number) {
               type="checkbox"
               id="habits"
               name="habits"
+              :checked="isChecked(index + 1 /* day */, habit.id)"
               @change="onChange(index + 1 /* day */, habit.id)"
             />
           </td>
