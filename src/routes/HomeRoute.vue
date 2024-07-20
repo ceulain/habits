@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import 'dayjs/locale/fr'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import dayjs from 'dayjs'
 import { db, type Habit } from '@/db'
 import { useObservable } from '@vueuse/rxjs'
@@ -8,12 +8,10 @@ import { liveQuery } from 'dexie'
 
 dayjs.locale('fr')
 
-const currentDay = dayjs()
-
-const currentMonth = ref(currentDay.format('MMMM'))
+const currentDay = ref(dayjs())
+const currentMonthLabel = computed(() => currentDay.value.format('MMMM YYYY'))
 const habitName = ref('')
-
-const numberOfDays = ref(currentDay.daysInMonth())
+const numberOfDays = computed(() => currentDay.value.daysInMonth())
 
 async function addHabit(e: Event) {
   e.preventDefault()
@@ -33,6 +31,14 @@ async function addHabit(e: Event) {
 }
 
 const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()))
+
+function nextMonth() {
+  currentDay.value = currentDay.value.add(1, 'month')
+}
+
+function previousMonth() {
+  currentDay.value = currentDay.value.add(-1, 'month')
+}
 
 function onInput(e: Event) {
   habitName.value = (<HTMLInputElement>e.target).value
@@ -57,13 +63,13 @@ function onChange(day: number, habitId: number) {
 
 function isChecked(day: number, habitId: number) {
   const habit = habits.value?.find((habit) => habit.id === habitId)
-  const date = dayjs().set('date', day).format('DD/MM/YYYY')
+  const date = currentDay.value.set('date', day).format('DD/MM/YYYY')
 
   return habit?.doneDates.includes(date)
 }
 
 function isDisabled(day: number) {
-  const date = dayjs().set('date', day)
+  const date = currentDay.value.set('date', day)
   const isBefore = date.isBefore(dayjs())
   const isAfter = date.isAfter(dayjs())
 
@@ -89,7 +95,9 @@ function isDisabled(day: number) {
       <thead>
         <tr>
           <th>&nbsp;</th>
-          <th :colspan="numberOfDays">Month</th>
+          <th :colspan="numberOfDays">
+            {{ currentMonthLabel.charAt(0).toUpperCase() + currentMonthLabel.slice(1) }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -112,57 +120,11 @@ function isDisabled(day: number) {
             />
           </td>
         </tr>
-        <!-- <tr>
-          <th>A</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>B</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>C</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr> -->
       </tbody>
-      <!-- <thead>
-        <tr>
-          <th>&nbsp;</th>
-          <th :colspan="numberOfDays">Month</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>&nbsp;</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">{{ index + 1 }}</td>
-        </tr>
-        <tr>
-          <th>A</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>B</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-        <tr>
-          <th>C</th>
-          <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
-            <input type="checkbox" id="scales" name="scales" />
-          </td>
-        </tr>
-      </tbody> -->
     </table>
   </div>
+  <button @click="previousMonth">Previous</button>
+  <button @click="nextMonth">Next</button>
 </template>
 
 <style scoped>
