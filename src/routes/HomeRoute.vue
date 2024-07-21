@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 import dayjs from 'dayjs'
 import { db, type Habit } from '@/db'
 import { useObservable } from '@vueuse/rxjs'
-import { liveQuery } from 'dexie'
+import { liveQuery, type Observable } from 'dexie'
 
 dayjs.locale('fr')
 
@@ -30,7 +30,7 @@ async function addHabit(e: Event) {
   }
 }
 
-const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()))
+const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()) as any)
 
 function nextMonth() {
   currentDay.value = currentDay.value.add(1, 'month')
