@@ -109,7 +109,7 @@ function isDisabled(day: number) {
       <thead>
         <tr>
           <th>&nbsp;</th>
-          <th :colspan="numberOfDays">
+          <th :colspan="numberOfDays" class="home--label-month">
             {{ currentMonthLabel.charAt(0).toUpperCase() + currentMonthLabel.slice(1) }}
           </th>
         </tr>
@@ -146,9 +146,16 @@ header {
   line-height: 1.5;
 }
 
+.home--label-month {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+
 .table-container {
   overflow: auto;
 }
+
 @media (min-width: 1024px) {
   header {
     display: flex;
