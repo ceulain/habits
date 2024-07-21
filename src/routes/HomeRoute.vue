@@ -45,13 +45,27 @@ function onInput(e: Event) {
 }
 
 function onChange(day: number, habitId: number) {
-  const dates = dayjs().set('date', day).format('DD/MM/YYYY')
+  const formattedDay = dayjs().set('date', day).format('DD/MM/YYYY')
+  const habits = db.habits.where(':id').equals(habitId)
 
-  db.habits
-    .where(':id')
-    .equals(habitId)
+  if (isChecked(day, habitId)) {
+    habits
+      .modify((habit) => {
+        habit.doneDates = habit.doneDates.filter((day) => day !== formattedDay)
+      })
+      .then(
+        (id) => {
+          console.log(`Habit with id ${id} has been deleted`)
+        },
+        (error) => console.log("Habit didn't delete", error)
+      )
+
+    return
+  }
+
+  habits
     .modify((habit) => {
-      habit.doneDates.push(dates)
+      habit.doneDates.push(formattedDay)
     })
     .then(
       (id) => {
@@ -70,8 +84,8 @@ function isChecked(day: number, habitId: number) {
 
 function isDisabled(day: number) {
   const date = currentDay.value.set('date', day)
-  const isBefore = date.isBefore(dayjs())
-  const isAfter = date.isAfter(dayjs())
+  const isBefore = date.isBefore(dayjs(), 'day')
+  const isAfter = date.isAfter(dayjs(), 'day')
 
   return isBefore || isAfter
 }
