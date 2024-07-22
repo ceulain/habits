@@ -4,7 +4,8 @@ import { computed, ref } from 'vue'
 import dayjs from 'dayjs'
 import { db, type Habit } from '@/db'
 import { useObservable } from '@vueuse/rxjs'
-import { liveQuery, type Observable } from 'dexie'
+import { liveQuery } from 'dexie'
+import BottomButtons from '@/components/BottomButtons.vue'
 
 dayjs.locale('fr')
 
@@ -18,7 +19,7 @@ async function addHabit(e: Event) {
 
   try {
     // Add the new friend!
-    const id = await db.habits.add({
+    await db.habits.add({
       name: habitName.value,
       doneDates: []
     })
@@ -137,8 +138,7 @@ function isDisabled(day: number) {
       </tbody>
     </table>
   </div>
-  <button @click="previousMonth">Previous</button>
-  <button @click="nextMonth">Next</button>
+  <BottomButtons :next-on-click="nextMonth" :prev-on-click="previousMonth"></BottomButtons>
 </template>
 
 <style scoped>
