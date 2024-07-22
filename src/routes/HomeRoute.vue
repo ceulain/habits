@@ -32,6 +32,7 @@ async function addHabit(e: Event) {
 }
 
 const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()) as any)
+const hasHabits = habits.value?.length !== 0
 
 function nextMonth() {
   currentDay.value = currentDay.value.add(1, 'month')
@@ -106,7 +107,7 @@ function isDisabled(day: number) {
   </form>
 
   <div class="table-container">
-    <table>
+    <table v-if="hasHabits">
       <thead>
         <tr>
           <th>&nbsp;</th>
@@ -138,7 +139,11 @@ function isDisabled(day: number) {
       </tbody>
     </table>
   </div>
-  <BottomButtons :next-on-click="nextMonth" :prev-on-click="previousMonth"></BottomButtons>
+  <BottomButtons
+    v-if="hasHabits"
+    :next-on-click="nextMonth"
+    :prev-on-click="previousMonth"
+  ></BottomButtons>
 </template>
 
 <style scoped>
