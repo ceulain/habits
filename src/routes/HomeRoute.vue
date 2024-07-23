@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import 'dayjs/locale/fr'
-import { computed, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import { db, type Habit } from '@/db'
 import { useObservable } from '@vueuse/rxjs'
@@ -13,6 +13,18 @@ const currentDay = ref(dayjs())
 const currentMonthLabel = computed(() => currentDay.value.format('MMMM YYYY'))
 const habitName = ref('')
 const numberOfDays = computed(() => currentDay.value.daysInMonth())
+const habitsCount = ref(0)
+
+onMounted(() => {
+  count()
+})
+
+async function count() {
+  const habit = await db.habits.count()
+  habitsCount.value = habit
+}
+
+const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()) as any)
 
 async function addHabit(e: Event) {
   e.preventDefault()
@@ -24,15 +36,14 @@ async function addHabit(e: Event) {
       doneDates: []
     })
 
+    count()
+
     // Reset form:
     habitName.value = ''
   } catch (error) {
     console.error('Failed to add task', error)
   }
 }
-
-const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()) as any)
-const hasHabits = habits.value?.length !== 0
 
 function nextMonth() {
   currentDay.value = currentDay.value.add(1, 'month')
@@ -91,6 +102,14 @@ function isDisabled(day: number) {
 
   return isBefore || isAfter
 }
+
+async function deleteDatabase() {
+  db.habits.clear()
+
+  count()
+
+  await nextTick()
+}
 </script>
 
 <template>
@@ -102,12 +121,12 @@ function isDisabled(day: number) {
       name="task-name"
       @input="onInput"
       placeholder="Nom de la tâche"
+      :value="habitName"
     />
     <button @click="addHabit">Ajouter la tâche</button>
   </form>
-
-  <div class="table-container">
-    <table v-if="hasHabits">
+  <div class="table-container" v-if="habitsCount > 0">
+    <table>
       <thead>
         <tr>
           <th>&nbsp;</th>
@@ -139,11 +158,8 @@ function isDisabled(day: number) {
       </tbody>
     </table>
   </div>
-  <BottomButtons
-    v-if="hasHabits"
-    :next-on-click="nextMonth"
-    :prev-on-click="previousMonth"
-  ></BottomButtons>
+  <BottomButtons :next-on-click="nextMonth" :prev-on-click="previousMonth"></BottomButtons>
+  <button @click="deleteDatabase">Supprimer toutes les habits</button>
 </template>
 
 <style scoped>
