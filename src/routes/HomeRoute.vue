@@ -6,6 +6,7 @@ import { db, type Habit } from '@/db'
 import { useObservable } from '@vueuse/rxjs'
 import { liveQuery } from 'dexie'
 import BottomButtons from '@/components/BottomButtons.vue'
+import IconClose from '@/icons/IconClose.vue'
 
 dayjs.locale('fr')
 
@@ -29,20 +30,34 @@ const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()) as an
 async function addHabit(e: Event) {
   e.preventDefault()
 
-  try {
-    // Add the new friend!
-    await db.habits.add({
+  if (!habitName.value) {
+    return
+  }
+
+  // Add the new friend!
+  await db.habits
+    .add({
       name: habitName.value,
       doneDates: []
     })
+    .then(() => {
+      count()
 
-    count()
+      // Reset form:
+      habitName.value = ''
+    })
+    .catch((error) => console.error('Failed to add habit', error))
+}
 
-    // Reset form:
-    habitName.value = ''
-  } catch (error) {
-    console.error('Failed to add task', error)
-  }
+function removeHabit(habitId: number) {
+  db.habits
+    .where('id')
+    .equals(habitId)
+    .delete()
+    .then(() => count())
+    .catch((error) => {
+      console.error('Failed to remove habit', error)
+    })
 }
 
 function nextMonth() {
@@ -143,7 +158,9 @@ async function deleteDatabase() {
           </td>
         </tr>
         <tr v-for="(habit, index) in habits" :key="habit.id">
-          <th>{{ habit.name }}</th>
+          <th class="tableHeader--label-habit">
+            {{ habit.name }} <IconClose @click="removeHabit(habit.id)"></IconClose>
+          </th>
           <td v-for="(day, index) in [...Array(numberOfDays)]" :key="index">
             <input
               type="checkbox"
@@ -158,13 +175,28 @@ async function deleteDatabase() {
       </tbody>
     </table>
   </div>
-  <BottomButtons :next-on-click="nextMonth" :prev-on-click="previousMonth"></BottomButtons>
-  <button @click="deleteDatabase">Supprimer toutes les habits</button>
+  <BottomButtons
+    v-if="habitsCount > 0"
+    :next-on-click="nextMonth"
+    :prev-on-click="previousMonth"
+  ></BottomButtons>
+  <button v-if="habitsCount > 0" @click="deleteDatabase">Supprimer toutes les habits</button>
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
+}
+
+.tableHeader--label-habit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tableHeader--label-habit svg {
+  height: 48px;
+  width: 48px;
 }
 
 .home--label-month {
