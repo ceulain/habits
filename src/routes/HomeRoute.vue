@@ -200,9 +200,11 @@ header {
 }
 
 .home--label-month {
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
+
+  z-index: -1;
 }
 
 .table-container {

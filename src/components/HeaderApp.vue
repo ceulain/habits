@@ -10,6 +10,7 @@ const props = defineProps({
 
 <style scoped>
 header {
+  z-index: 1000;
   position: sticky;
   top: 0;
 

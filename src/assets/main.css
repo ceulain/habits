@@ -25,6 +25,6 @@ th {
 
 tr > th:first-child,
 tr > td:first-child {
-  position: sticky;
+  position: static;
   left: 0;
 }
