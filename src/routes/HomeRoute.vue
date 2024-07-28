@@ -15,23 +15,23 @@ const currentMonthLabel = computed(() => currentDay.value.format('MMMM YYYY'))
 const habitName = ref('')
 const numberOfDays = computed(() => currentDay.value.daysInMonth())
 const habitsCount = ref(0)
-const tableRef = ref<VNodeRef | null>(null)
-
-const getTableContainer = (el: VNodeRef) => (tableRef.value = el)
+const container = ref<VNodeRef | null>(null)
 
 onMounted(() => {
   count()
 })
 
-watch(tableRef, () => {
+watch(container, () => {
   const dateOfCurrentDay = currentDay.value.get('date')
-  tableRef.value?.scrollTo(60 * dateOfCurrentDay, 0)
+  container.value?.scrollTo(60 * dateOfCurrentDay, 0)
 })
 
-async function count() {
+const count = async () => {
   const habit = await db.habits.count()
   habitsCount.value = habit
 }
+
+const getTableContainer = (el: VNodeRef) => (container.value = el)
 
 const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()) as any)
 
@@ -68,19 +68,19 @@ const removeHabit = (habitId: number) => {
     })
 }
 
-function nextMonth() {
+const nextMonth = () => {
   currentDay.value = currentDay.value.add(1, 'month')
 }
 
-function previousMonth() {
+const previousMonth = () => {
   currentDay.value = currentDay.value.add(-1, 'month')
 }
 
-function onInput(e: Event) {
+const onInput = (e: Event) => {
   habitName.value = (<HTMLInputElement>e.target).value
 }
 
-function onChange(day: number, habitId: number) {
+const onChange = (day: number, habitId: number) => {
   const formattedDay = dayjs().set('date', day).format('DD/MM/YYYY')
   const habits = db.habits.where(':id').equals(habitId)
 
@@ -111,14 +111,14 @@ function onChange(day: number, habitId: number) {
     )
 }
 
-function isChecked(day: number, habitId: number) {
+const isChecked = (day: number, habitId: number) => {
   const habit = habits.value?.find((habit) => habit.id === habitId)
   const date = currentDay.value.set('date', day).format('DD/MM/YYYY')
 
   return habit?.doneDates.includes(date)
 }
 
-function isDisabled(day: number) {
+const isDisabled = (day: number) => {
   const date = currentDay.value.set('date', day)
   const isBefore = date.isBefore(dayjs(), 'day')
   const isAfter = date.isAfter(dayjs(), 'day')
@@ -126,7 +126,7 @@ function isDisabled(day: number) {
   return isBefore || isAfter
 }
 
-async function deleteDatabase() {
+const deleteDatabase = async () => {
   db.habits.clear()
 
   count()
