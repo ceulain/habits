@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import 'dayjs/locale/fr'
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch, type VNodeRef } from 'vue'
 import dayjs from 'dayjs'
 import { db, type Habit } from '@/db'
 import { useObservable } from '@vueuse/rxjs'
@@ -15,9 +15,17 @@ const currentMonthLabel = computed(() => currentDay.value.format('MMMM YYYY'))
 const habitName = ref('')
 const numberOfDays = computed(() => currentDay.value.daysInMonth())
 const habitsCount = ref(0)
+const tableRef = ref<VNodeRef | null>(null)
+
+const getTableContainer = (el: VNodeRef) => (tableRef.value = el)
 
 onMounted(() => {
   count()
+})
+
+watch(tableRef, () => {
+  const dateOfCurrentDay = currentDay.value.get('date')
+  tableRef.value?.scrollTo(60 * dateOfCurrentDay, 0)
 })
 
 async function count() {
@@ -49,7 +57,7 @@ async function addHabit(e: Event) {
     .catch((error) => console.error('Failed to add habit', error))
 }
 
-function removeHabit(habitId: number) {
+const removeHabit = (habitId: number) => {
   db.habits
     .where('id')
     .equals(habitId)
@@ -140,7 +148,7 @@ async function deleteDatabase() {
     />
     <button @click="addHabit">Ajouter la tâche</button>
   </form>
-  <div class="table-container" v-if="habitsCount > 0">
+  <div class="table-container" v-if="habitsCount > 0" :ref="getTableContainer">
     <table>
       <thead>
         <tr>
