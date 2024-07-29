@@ -8,6 +8,7 @@ const props = defineProps({
 <style scoped>
 .container {
   position: fixed;
+  z-index: 1;
 
   top: 0;
   right: 0;
