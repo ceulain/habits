@@ -5,20 +5,21 @@ import dayjs from 'dayjs'
 import { db, type Habit } from '@/db'
 import { useObservable } from '@vueuse/rxjs'
 import { liveQuery } from 'dexie'
+
 import BottomButtons from '@/components/BottomButtons.vue'
+import Form from '@/components/Form.vue'
 import IconClose from '@/icons/IconClose.vue'
 
 dayjs.locale('fr')
 
 const currentDay = ref(dayjs())
 const currentMonthLabel = computed(() => currentDay.value.format('MMMM YYYY'))
-const habitName = ref('')
 const numberOfDays = computed(() => currentDay.value.daysInMonth())
 const habitsCount = ref(0)
 const container = ref<VNodeRef | null>(null)
 
 onMounted(() => {
-  count()
+  countHabits()
 })
 
 watch(container, () => {
@@ -26,7 +27,7 @@ watch(container, () => {
   container.value?.scrollTo(60 * dateOfCurrentDay, 0)
 })
 
-const count = async () => {
+const countHabits = async () => {
   const habit = await db.habits.count()
   habitsCount.value = habit
 }
@@ -35,34 +36,12 @@ const getTableContainer = (el: VNodeRef) => (container.value = el)
 
 const habits = useObservable<Habit[]>(liveQuery(() => db.habits.toArray()) as any)
 
-async function addHabit(e: Event) {
-  e.preventDefault()
-
-  if (!habitName.value) {
-    return
-  }
-
-  // Add the new friend!
-  await db.habits
-    .add({
-      name: habitName.value,
-      doneDates: []
-    })
-    .then(() => {
-      count()
-
-      // Reset form:
-      habitName.value = ''
-    })
-    .catch((error) => console.error('Failed to add habit', error))
-}
-
 const removeHabit = (habitId: number) => {
   db.habits
     .where('id')
     .equals(habitId)
     .delete()
-    .then(() => count())
+    .then(() => countHabits())
     .catch((error) => {
       console.error('Failed to remove habit', error)
     })
@@ -74,10 +53,6 @@ const nextMonth = () => {
 
 const previousMonth = () => {
   currentDay.value = currentDay.value.add(-1, 'month')
-}
-
-const onInput = (e: Event) => {
-  habitName.value = (<HTMLInputElement>e.target).value
 }
 
 const onChange = (day: number, habitId: number) => {
@@ -129,25 +104,14 @@ const isDisabled = (day: number) => {
 const deleteDatabase = async () => {
   db.habits.clear()
 
-  count()
+  countHabits()
 
   await nextTick()
 }
 </script>
 
 <template>
-  <form>
-    <label for="task-name">Name: </label>
-    <input
-      type="text"
-      id="task-name"
-      name="task-name"
-      @input="onInput"
-      placeholder="Nom de la tâche"
-      :value="habitName"
-    />
-    <button @click="addHabit">Ajouter la tâche</button>
-  </form>
+  <Form @count-habits="countHabits"></Form>
   <div class="table-container" v-if="habitsCount > 0" :ref="getTableContainer">
     <table>
       <thead>
@@ -165,7 +129,7 @@ const deleteDatabase = async () => {
             {{ index + 1 }}
           </td>
         </tr>
-        <tr v-for="(habit, index) in habits" :key="habit.id">
+        <tr v-for="habit in habits" :key="habit.id">
           <th class="tableHeader--label-habit">
             {{ habit.name }} <IconClose @click="removeHabit(habit.id)"></IconClose>
           </th>
